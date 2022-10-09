@@ -1,36 +1,44 @@
 ---
-title: Playground
-weight: 25
-pre: "<b>4. </b>"
+title: Dev
+weight: 22
+pre: "<b>*. </b>"
 chapter: true
 ---
 
-### Chapter 1
+### Dev for Forms
 
 # Basics
 
 Discover what this Hugo theme is all about and the core-concepts behind it.
 
-
-<form>
-  <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-  </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Password</label>
-    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-  </div>
-  <div class="form-group form-check">
-    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-    <label class="form-check-label" for="exampleCheck1">Check me out</label>
-  </div>
-  <button type="submit" class="btn btn-primary" onclick="run()">Submit</button>
-</form>
+{{< netlify-form name="contact" >}}
+  {{< form-input id="firstname" type="text" placeholder="John" label="First Name:" required="true" >}}
+  {{< form-input id="lastname" type="text" placeholder="Doe" label="Last Name:" >}}
+  {{< form-input id="reply_email" type="email" placeholder="john.doe@email.com" label="Reply-To Email:" required="true" >}}
+  {{< mult-input label="Gender:" name="gender" required="true" add_other="true" type="select" >}}
+    {{< form-option label="Male" value="male" >}}
+    {{< form-option label="Female" value="female" >}}
+  {{< /mult-input >}}
+  {{< form-input id="contact_description" type="textarea" label="Explain:" required="true" >}}
+{{< /netlify-form >}}
 
 <script>
-    function run() {
-        alert("RUN");
-    }
+  const handleSubmit = (event) => {
+  event.preventDefault();
+
+  const myForm = event.target;
+  const formData = new FormData(myForm);
+  
+  fetch("/", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(formData).toString(),
+  })
+    .then(() => console.log("Form successfully submitted"))
+    .catch((error) => alert(error));
+};
+
+document
+  .querySelector("form")
+  .addEventListener("submit", handleSubmit);
 </script>
