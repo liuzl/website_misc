@@ -11,11 +11,12 @@ chapter: true
 
 Discover what this Hugo theme is all about and the core-concepts behind it.
 
+
 {{< netlify-form name="contact" >}}
   {{< form-input id="firstname" type="text" placeholder="John" label="First Name:" required="true" >}}
   {{< form-input id="lastname" type="text" placeholder="Doe" label="Last Name:" >}}
   {{< form-input id="reply_email" type="email" placeholder="john.doe@email.com" label="Reply-To Email:" required="true" >}}
-  {{< mult-input label="Gender:" name="gender" required="true" add_other="true" type="select" >}}
+  {{< mult-input label="Gender:" name="gender" required="true" add_other="false" type="select" >}}
     {{< form-option label="Male" value="male" >}}
     {{< form-option label="Female" value="female" >}}
   {{< /mult-input >}}
