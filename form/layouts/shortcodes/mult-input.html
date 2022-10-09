@@ -10,7 +10,7 @@
     {{ if eq $type "select" }}
     <label for="{{ $name }}">
     {{ end }}
-    <p>{{ .Get "label" }}</p>
+    {{ .Get "label" }}
     {{ if eq $type "select" }}
     </label>
     {{ end }}
