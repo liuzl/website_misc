@@ -51,10 +51,10 @@
 
   document.querySelector("form").addEventListener("submit", handleSubmit);
 
-  var loadFile = function(event, id, imgid) {
+  const loadFile = function(event, id, imgid) {
     const preview = document.querySelector(id);
     const img = document.querySelector(imgid);
-    var reader = new FileReader();
+    const reader = new FileReader();
     reader.onload = function() {
       const image = new Image();
       //image.height = 100;
