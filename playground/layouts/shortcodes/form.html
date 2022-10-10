@@ -10,36 +10,59 @@
     <button type="submit" class="btn btn-primary">Submit</button>
   </div>
 </form>
+
+<div class="box notices cstyle" id="resp">
+  <div class="box-label">Response Status</div>
+  <div class="box-content" id="status"></div>
+</div>
+
 <div class="highlight">
-  <pre class="chroma external">
+  <pre class="chroma">
     <code class="json" id="response"></code>
   </pre>
 </div>
 
 <script>
+  const codeMap = {2:"box notices cstyle green", 4:"box notices cstyle orange", 5:"box notices cstyle red"};
   const handleSubmit = (event) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  const myForm = event.target;
-  const formData = new FormData(myForm);
+    const myForm = event.target;
+    const formData = new FormData(myForm);
   
-  fetch(myForm.action, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(formData).toString(),
-  }).then((response) => {
-    console.log(`HTTP ok: ${response.ok}`);
-    console.log(`HTTP error: ${response.status}`);
-    console.log("Form successfully submitted");
-    return response.text();
-  }).then((text) => {
-    const response = document.querySelector('#response');
-    response.innerHTML = JSON.stringify(JSON.parse(text),null,2);
-    hljs.highlightBlock(response);
-  });
-};
+    fetch(myForm.action, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData).toString(),
+    }).then((response) => {
+      console.log(`HTTP ok: ${response.ok}`);
+      document.querySelector('#status').textContent = response.status;
+      const idx = response.status/100;
+      if (idx in codeMap) {
+        document.querySelector('#resp').setAttribute("class", codeMap[idx]);
+      }
+      return response.text();
+    }).then((text) => {
+      const response = document.querySelector('#response');
+      response.innerHTML = JSON.stringify(JSON.parse(text),null,2);
+      hljs.highlightBlock(response);
+    });
+  };
 
-document
-  .querySelector("form")
-  .addEventListener("submit", handleSubmit);
+  document.querySelector("form").addEventListener("submit", handleSubmit);
+
+  var loadFile = function(event, id, imgid) {
+    const preview = document.querySelector(id);
+    const img = document.querySelector(imgid);
+    var reader = new FileReader();
+    reader.onload = function() {
+      const image = new Image();
+      //image.height = 100;
+      image.title = event.target.files[0].name;
+      image.src = reader.result;
+      img.value = reader.result.slice(reader.result.indexOf(',')+1);
+      preview.replaceChildren(image);
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  };
 </script>
