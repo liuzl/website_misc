@@ -28,10 +28,8 @@
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams(formData).toString(),
   }).then((response) => {
-    if (!response.ok) {
-      //throw new Error(`HTTP error: ${response.status}`);
-      console.log(`HTTP error: ${response.status}`);
-    }
+    console.log(`HTTP ok: ${response.ok}`);
+    console.log(`HTTP error: ${response.status}`);
     console.log("Form successfully submitted");
     return response.text();
   }).then((text) => {
