@@ -2,8 +2,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
 
 {{ $action := .Get "action" | default "thank-you" -}}
+{{- $type := .Get "type" | default "x-www-form-urlencoded" -}}
 {{- if ne $action "thank-you" -}}{{- $action := ($action | absLangURL) -}}{{- end -}}
+
 <form action="{{ $action }}">
+  <div class="row">
+    <label for="apiKey">apiKey</label>
+    <input type="text" id="apiKey" value="wiIb6DAhnYC2Hx5DglRBUCd1xpgDb55o" required />
+  </div>
   {{ .Inner }}
   <div class="row">
     <button type="reset" class="btn btn-primary">Reset</button>
@@ -27,25 +33,38 @@
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    const apiKey = document.querySelector("#apiKey");
+
     const myForm = event.target;
     const formData = new FormData(myForm);
   
     fetch(myForm.action, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(formData).toString(),
-    }).then((response) => {
+      headers: { "Content-Type": "application/{{ $type }}", "X-Api-Key": apiKey.value },
+      body: "{{ $type }}" == "json"? JSON.stringify(Object.fromEntries(formData)): new URLSearchParams(formData).toString(),
+    })
+    .then((response) => {
       console.log(`HTTP ok: ${response.ok}`);
-      document.querySelector('#status').textContent = response.status;
-      const idx = response.status/100;
+      
+      const idx = parseInt(response.status / 100);
       if (idx in codeMap) {
         document.querySelector('#resp').setAttribute("class", codeMap[idx]);
       }
-      return response.text();
-    }).then((text) => {
+      document.querySelector('#status').textContent = response.status + " - " +response.statusText;
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
+      } else {
+        throw Error(response);
+      }
+    })
+    .then((json) => {
       const response = document.querySelector('#response');
-      response.innerHTML = JSON.stringify(JSON.parse(text),null,2);
+      response.innerHTML = JSON.stringify(json, null, 2);
       hljs.highlightBlock(response);
+    })
+    .catch((error) => {
+      document.querySelector('#status').textContent = error;
+      document.querySelector('#resp').setAttribute("class", codeMap[5]);
     });
   };
 

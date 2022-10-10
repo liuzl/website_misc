@@ -4,8 +4,8 @@
   {{- $id := .Get "id" -}}
   {{- $name := (.Get "name" | default $id) -}}
 
-  <input type="file" accept="image/*" onchange="loadFile(event,'#{{ $id }}-preview','#{{ $id }}')" />
-  <input type="hidden" id="{{ $id }}" name="{{ $name }}" value="" />
+  <input type="file" accept="image/*" onchange="loadFile(event,'#{{ $id }}-preview','#{{ $id }}')" required />
+  <input type="hidden" id="{{ $id }}" name="{{ $name }}" value="" required />
   <div id="{{ $id }}-preview"></div>
 </div>
 
