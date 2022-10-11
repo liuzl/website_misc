@@ -14,6 +14,7 @@
   <div class="row">
     <button type="reset" class="btn btn-primary">Reset</button>
     <button type="submit" class="btn btn-primary">Submit</button>
+    <span id="loading"></span>
   </div>
 </form>
 
@@ -37,7 +38,10 @@
 
     const myForm = event.target;
     const formData = new FormData(myForm);
-  
+
+    const loading = document.querySelector("#loading");
+    loading.textContent = "Loading...";
+    let time1 = performance.now();
     fetch(myForm.action, {
       method: "POST",
       headers: { "Content-Type": "application/{{ $type }}", "X-Api-Key": apiKey.value },
@@ -58,6 +62,8 @@
       }
     })
     .then((json) => {
+      let time2 = performance.now();
+      loading.textContent = `Time elapsed: ${(time2-time1).toFixed(2)}ms`;
       const response = document.querySelector('#response');
       response.innerHTML = JSON.stringify(json, null, 2);
       hljs.highlightBlock(response);
