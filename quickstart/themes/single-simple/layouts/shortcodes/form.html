@@ -51,18 +51,13 @@
       body: "{{ $type }}" == "json"? JSON.stringify(Object.fromEntries(formData)): new URLSearchParams(formData).toString(),
     })
     .then((response) => {
-      console.log(`HTTP ok: ${response.ok}`);
-      
       const idx = parseInt(response.status / 100);
       if (idx in codeMap) {
         document.querySelector('#resp').setAttribute("class", codeMap[idx]);
       }
       document.querySelector('#status').textContent = response.status + " - " +response.statusText;
-      if (response.status >= 200 && response.status < 300) {
-        return response.json();
-      } else {
-        throw Error(response);
-      }
+      console.log(`HTTP status: ${response.status}`);
+      return response.json();
     })
     .then((json) => {
       let time2 = performance.now();
@@ -70,10 +65,6 @@
       const response = document.querySelector('#response');
       response.innerHTML = JSON.stringify(json, null, 2);
       hljs.highlightBlock(response);
-    })
-    .catch((error) => {
-      document.querySelector('#status').textContent = error;
-      document.querySelector('#resp').setAttribute("class", codeMap[5]);
     });
   };
 

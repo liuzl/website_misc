@@ -1,6 +1,7 @@
 <div>
   {{ $type := .Get "type" }}
-  {{ $name := .Get "name" }}
+  {{- $id := .Get "id" -}}
+  {{- $name := (.Get "name" | default $id) -}}
 
   {{ $.Scratch.Set "form-input-type" $type }}
   {{- if not (in (slice "checkbox" "radio" "select") $type) -}}
