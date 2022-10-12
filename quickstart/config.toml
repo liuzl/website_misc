@@ -1,0 +1,10 @@
+baseURL = '.'
+languageCode = 'en-us'
+title = 'My New Hugo Site'
+theme = 'single-simple'
+
+[outputs]
+  home = ['HTML']
+  page = ['HTML']
+[minify]
+  minifyOutput = false

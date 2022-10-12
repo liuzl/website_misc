@@ -1,0 +1,11 @@
+<div>
+  <label for="{{- .Get "id" -}}">{{- .Get "label" -}}</label>
+
+  {{- $id := .Get "id" -}}
+  {{- $name := (.Get "name" | default $id) -}}
+
+  <input type="file" accept="image/*" onchange="loadFile(event,'#{{ $id }}-preview','#{{ $id }}')" required />
+  <input type="hidden" id="{{ $id }}" name="{{ $name }}" value="" required />
+  <div id="{{ $id }}-preview"></div>
+</div>
+

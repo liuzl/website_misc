@@ -1,0 +1,23 @@
+<div>
+  {{ $type := .Get "type" }}
+  {{ $name := .Get "name" }}
+
+  {{ $.Scratch.Set "form-input-type" $type }}
+  {{- if not (in (slice "checkbox" "radio" "select") $type) -}}
+    {{- errorf "Invalid multiple-choice input type \"%s\" - valid options are \"checkbox\", \"radio\", and \"select\"" -}}
+  {{- end -}}
+
+    {{ if eq $type "select" }}
+    <label for="{{ $name }}">{{ .Get "label" }}</label>
+    <select name="{{ $name }}"{{ if eq (.Get "required") "true" }} required{{ end }}>
+      <option value="">[Choose one]</option>
+      {{ .Inner | safeHTML }}
+    </select>
+    {{ else }}
+    <ul>
+    {{ .Inner | safeHTML }}
+    </ul>
+    {{ end }}
+
+</div>
+

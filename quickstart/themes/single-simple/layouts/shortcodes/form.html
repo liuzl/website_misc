@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/monokai.css" type="text/css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+
+{{ $action := .Get "action" | default "/api" -}}
+{{- $type := .Get "type" | default "x-www-form-urlencoded" -}}
+{{- if ne $action "/api" -}}{{- $action := ($action | absLangURL) -}}{{- end -}}
+
+<form action="{{ $action }}">
+  {{ .Inner }}
+  <div style="margin-top: 10px;">
+    <button type="reset" class="button">Reset</button>
+    <button type="submit" class="button primary">Submit</button>
+    <span id="loading" class="text-light"></span>
+  </div>
+</form>
+
+<div class="card" id="resp" style="margin-top: 10px;">
+  <header>Response Status</header>
+  <div id="status"></div>
+</div>
+
+<div class="card" style="margin-top: 10px;">
+  <pre class="chroma">
+    <code class="json" id="response"></code>
+  </pre>
+</div>
+
+<script>
+  const codeMap = {2:"card bg-success", 4:"card bg-error", 5:"card bg-error"};
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const myForm = event.target;
+    const formData = new FormData(myForm);
+
+    const loading = document.querySelector("#loading");
+    loading.textContent = "Loading...";
+    let time1 = performance.now();
+    fetch(myForm.action, {
+      method: "POST",
+      headers: { "Content-Type": "application/{{ $type }}" },
+      body: "{{ $type }}" == "json"? JSON.stringify(Object.fromEntries(formData)): new URLSearchParams(formData).toString(),
+    })
+    .then((response) => {
+      console.log(`HTTP ok: ${response.ok}`);
+      
+      const idx = parseInt(response.status / 100);
+      if (idx in codeMap) {
+        document.querySelector('#resp').setAttribute("class", codeMap[idx]);
+      }
+      document.querySelector('#status').textContent = response.status + " - " +response.statusText;
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
+      } else {
+        throw Error(response);
+      }
+    })
+    .then((json) => {
+      let time2 = performance.now();
+      loading.textContent = `Time elapsed: ${(time2-time1).toFixed(2)}ms`;
+      const response = document.querySelector('#response');
+      response.innerHTML = JSON.stringify(json, null, 2);
+      hljs.highlightBlock(response);
+    })
+    .catch((error) => {
+      document.querySelector('#status').textContent = error;
+      document.querySelector('#resp').setAttribute("class", codeMap[5]);
+    });
+  };
+
+  document.querySelector("form").addEventListener("submit", handleSubmit);
+
+  const loadFile = function(event, id, imgid) {
+    const preview = document.querySelector(id);
+    const img = document.querySelector(imgid);
+    const reader = new FileReader();
+    reader.onload = function() {
+      const image = new Image();
+      image.title = event.target.files[0].name;
+      image.src = reader.result;
+      img.value = reader.result.slice(reader.result.indexOf(',')+1);
+      preview.replaceChildren(image);
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  };
+</script>
