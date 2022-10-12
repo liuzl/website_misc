@@ -3,4 +3,4 @@ languageCode = 'en-us'
 title = 'playground'
 theme = 'single-simple'
 disableKinds = ['page', 'sitemap', 'RSS']
-
+disableHugoGeneratorInject = true
