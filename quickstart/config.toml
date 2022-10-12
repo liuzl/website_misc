@@ -1,10 +1,6 @@
 baseURL = '.'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'playground'
 theme = 'single-simple'
+disableKinds = ['page', 'sitemap', 'RSS']
 
-[outputs]
-  home = ['HTML']
-  page = ['HTML']
-[minify]
-  minifyOutput = false
